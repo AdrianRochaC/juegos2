@@ -72,7 +72,6 @@
             }
             
             if (ballY < 0 || ballY > canvas.height) {
-                alert("Game Over");
                 document.location.reload();
             }
             
