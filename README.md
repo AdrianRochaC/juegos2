@@ -14,23 +14,41 @@
             display: block;
             margin: auto;
         }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Juego del Pong Vertical</h1>
     <h2>Jugador: <span id="playerScore">0</span> - IA: <span id="aiScore">0</span></h2>
     <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <br>
+    <button id="startButton">Iniciar Juego</button>
+    <button id="resetButton" style="display: none;">Reiniciar Juego</button>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
+        const startButton = document.getElementById("startButton");
+        const resetButton = document.getElementById("resetButton");
         
         let paddleWidth = 80, paddleHeight = 10;
-        let playerX = (canvas.width - paddleWidth) / 2;
-        let aiX = (canvas.width - paddleWidth) / 2;
-        let ballX = canvas.width / 2, ballY = canvas.height / 2;
-        let ballSpeedX = 5, ballSpeedY = 5;
-        let playerSpeed = 0;
+        let playerX, aiX, ballX, ballY, ballSpeedX, ballSpeedY, playerSpeed;
         let playerScore = 0, aiScore = 0;
+        let gameInterval;
+        
+        function initializeGame() {
+            playerX = (canvas.width - paddleWidth) / 2;
+            aiX = (canvas.width - paddleWidth) / 2;
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            ballSpeedX = 5;
+            ballSpeedY = 5;
+            playerSpeed = 0;
+        }
         
         document.addEventListener("keydown", function(event) {
             if (event.key === "ArrowLeft") playerSpeed = -8;
@@ -72,13 +90,31 @@
             }
             
             if (ballY < 0 || ballY > canvas.height) {
-                document.location.reload();
+                clearInterval(gameInterval);
+                startButton.style.display = "none";
+                resetButton.style.display = "inline-block";
             }
             
             aiX = ballX - paddleWidth / 2;
         }
         
-        setInterval(drawGame, 30);
+        startButton.addEventListener("click", function() {
+            initializeGame();
+            gameInterval = setInterval(drawGame, 30);
+            startButton.style.display = "none";
+            resetButton.style.display = "none";
+        });
+        
+        resetButton.addEventListener("click", function() {
+            playerScore = 0;
+            aiScore = 0;
+            document.getElementById("playerScore").innerText = playerScore;
+            document.getElementById("aiScore").innerText = aiScore;
+            initializeGame();
+            gameInterval = setInterval(drawGame, 30);
+            resetButton.style.display = "none";
+        });
     </script>
 </body>
 </html>
+
